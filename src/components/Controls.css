@@ -1,0 +1,62 @@
+.controls {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  padding: 16px 0;
+  flex-wrap: wrap;
+}
+
+.controls__btn {
+  padding: 10px 24px;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease, opacity 0.15s ease;
+  /* Touch-friendly: ensure minimum 44px tap target */
+  min-height: 44px;
+}
+
+.controls__btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.controls__btn--primary {
+  background: #42a5f5;
+  color: #fff;
+}
+.controls__btn--primary:hover:not(:disabled) {
+  background: #1e88e5;
+}
+
+.controls__btn--secondary {
+  background: #66bb6a;
+  color: #fff;
+}
+.controls__btn--secondary:hover:not(:disabled) {
+  background: #43a047;
+}
+
+.controls__btn--danger {
+  background: #555;
+  color: #ccc;
+}
+.controls__btn--danger:hover:not(:disabled) {
+  background: #ef5350;
+  color: #fff;
+}
+
+/* Responsive */
+@media (max-width: 420px) {
+  .controls {
+    gap: 8px;
+    padding: 12px 0;
+  }
+
+  .controls__btn {
+    padding: 10px 16px;
+    font-size: 0.9rem;
+  }
+}

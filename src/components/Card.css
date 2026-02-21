@@ -1,0 +1,89 @@
+.card {
+  border-radius: 8px;
+  border: 2px solid #555;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+  user-select: none;
+  gap: 1px;
+  padding: 0;
+}
+
+.card--normal {
+  width: 72px;
+  height: 104px;
+  font-size: 1.2rem;
+}
+
+.card--normal .card__suit { font-size: 1.5rem; }
+.card--normal .card__rank { font-size: 1.1rem; }
+
+.card--small {
+  width: 56px;
+  height: 80px;
+  font-size: 1rem;
+}
+
+.card--small .card__suit { font-size: 1.2rem; }
+.card--small .card__rank { font-size: 0.9rem; }
+
+.card:hover:not(.card--disabled):not(.card--handled) {
+  border-color: #888;
+}
+
+.card--red { color: #d32f2f; }
+.card--black { color: #222; }
+
+.card--selected {
+  transform: translateY(-8px);
+  box-shadow: 0 0 14px 3px rgba(66, 165, 245, 0.6);
+  border-color: #42a5f5;
+}
+
+.card--handled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.card--disabled {
+  cursor: default;
+}
+
+/* Responsive: shrink cards on small screens */
+@media (max-width: 420px) {
+  .card--normal {
+    width: 56px;
+    height: 80px;
+    font-size: 1rem;
+  }
+  .card--normal .card__suit { font-size: 1.2rem; }
+  .card--normal .card__rank { font-size: 0.9rem; }
+
+  .card--small {
+    width: 48px;
+    height: 68px;
+    font-size: 0.85rem;
+  }
+  .card--small .card__suit { font-size: 1rem; }
+  .card--small .card__rank { font-size: 0.8rem; }
+}
+
+@media (max-width: 360px) {
+  .card--normal {
+    width: 50px;
+    height: 72px;
+    font-size: 0.9rem;
+  }
+  .card--small {
+    width: 44px;
+    height: 62px;
+    font-size: 0.8rem;
+  }
+  .card--small .card__suit { font-size: 0.9rem; }
+  .card--small .card__rank { font-size: 0.75rem; }
+}

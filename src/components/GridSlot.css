@@ -1,0 +1,111 @@
+.grid-slot {
+  width: 56px;
+  height: 80px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.grid-slot--filled {
+  /* no extra styling, Card component handles it */
+}
+
+.grid-slot--pending {
+  position: relative;
+  cursor: pointer;
+  border-radius: 6px;
+  outline: 2px solid #ffa726;
+  outline-offset: 1px;
+  background: transparent;
+  border: none;
+  padding: 0;
+}
+
+.grid-slot--pending > .card {
+  pointer-events: none;
+}
+
+.grid-slot--pending:hover {
+  outline-color: #ef5350;
+}
+
+.grid-slot__pending-badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background: #ffa726;
+  color: #000;
+  font-size: 0.5rem;
+  font-weight: bold;
+  padding: 1px 4px;
+  border-radius: 3px;
+  text-transform: uppercase;
+}
+
+.grid-slot--empty {
+  border: 2px dashed #444;
+  background: transparent;
+  cursor: default;
+  transition: border-color 0.15s ease, background 0.15s ease;
+  padding: 0;
+}
+
+.grid-slot--target {
+  border-color: #42a5f5;
+  background: rgba(66, 165, 245, 0.12);
+  cursor: pointer;
+  animation: pulse-target 1.2s ease-in-out infinite;
+}
+
+.grid-slot--target:hover {
+  background: rgba(66, 165, 245, 0.25);
+  border-color: #1e88e5;
+}
+
+.grid-slot__target-icon {
+  font-size: 1.5rem;
+  color: #42a5f5;
+  font-weight: bold;
+}
+
+@keyframes pulse-target {
+  0%, 100% { border-color: #42a5f5; }
+  50% { border-color: #90caf9; }
+}
+
+/* Responsive: smaller slots on small screens */
+@media (max-width: 420px) {
+  .grid-slot {
+    width: 48px;
+    height: 68px;
+  }
+
+  .grid-slot__target-icon {
+    font-size: 1.2rem;
+  }
+
+  .grid-slot__pending-badge {
+    font-size: 0.45rem;
+    top: -5px;
+    right: -5px;
+    padding: 1px 3px;
+  }
+}
+
+@media (max-width: 360px) {
+  .grid-slot {
+    width: 44px;
+    height: 62px;
+  }
+
+  .grid-slot__target-icon {
+    font-size: 1rem;
+  }
+
+  .grid-slot__pending-badge {
+    font-size: 0.4rem;
+    top: -4px;
+    right: -4px;
+  }
+}

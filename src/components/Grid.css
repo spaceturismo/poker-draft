@@ -1,0 +1,148 @@
+.grid-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.grid-diag-labels {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 440px;
+  padding: 0 30px;
+}
+
+.grid-diag-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.grid-diag-arrow {
+  font-size: 1.2rem;
+  color: #888;
+}
+
+.grid-col-headers {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.grid-col-headers__spacer {
+  width: 24px;
+  flex-shrink: 0;
+}
+
+.grid-col-header {
+  width: 56px;
+  text-align: center;
+  font-size: 0.65rem;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 2px 0;
+  border-radius: 4px;
+  transition: color 0.15s ease, background 0.15s ease;
+}
+
+.grid-col-header--active {
+  color: #42a5f5;
+  background: rgba(66, 165, 245, 0.1);
+}
+
+.grid-main {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.grid-row {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.grid-row__label {
+  width: 24px;
+  font-size: 0.65rem;
+  color: #666;
+  text-align: right;
+}
+
+.grid-col-evals {
+  display: flex;
+  gap: 6px;
+  align-items: flex-start;
+  padding-top: 4px;
+}
+
+.grid-col-evals__spacer {
+  width: 24px;
+}
+
+.grid-col-evals .hand-label {
+  width: 56px;
+  text-align: center;
+}
+
+/* Responsive: tighter spacing on small screens */
+@media (max-width: 420px) {
+  .grid-col-headers,
+  .grid-row,
+  .grid-col-evals {
+    gap: 4px;
+  }
+
+  .grid-col-header {
+    width: 48px;
+    font-size: 0.55rem;
+  }
+
+  .grid-col-headers__spacer,
+  .grid-col-evals__spacer {
+    width: 20px;
+  }
+
+  .grid-row__label {
+    width: 20px;
+    font-size: 0.55rem;
+  }
+
+  .grid-diag-labels {
+    max-width: 320px;
+    padding: 0 20px;
+  }
+
+  .grid-col-evals .hand-label {
+    width: 48px;
+  }
+}
+
+@media (max-width: 360px) {
+  .grid-col-headers,
+  .grid-row,
+  .grid-col-evals {
+    gap: 3px;
+  }
+
+  .grid-col-header {
+    width: 44px;
+    font-size: 0.5rem;
+  }
+
+  .grid-col-headers__spacer,
+  .grid-col-evals__spacer {
+    width: 18px;
+  }
+
+  .grid-row__label {
+    width: 18px;
+    font-size: 0.5rem;
+  }
+
+  .grid-col-evals .hand-label {
+    width: 44px;
+  }
+}

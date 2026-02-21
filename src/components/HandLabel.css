@@ -1,0 +1,37 @@
+.hand-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.hand-label__name {
+  font-size: 0.7rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.hand-label__points {
+  font-size: 0.65rem;
+  color: #4fc3f7;
+  font-weight: bold;
+}
+
+.hand-label--row { min-width: 90px; }
+.hand-label--col { min-width: 56px; }
+.hand-label--diag { min-width: 80px; }
+
+/* Responsive */
+@media (max-width: 420px) {
+  .hand-label__name {
+    font-size: 0.55rem;
+  }
+
+  .hand-label__points {
+    font-size: 0.5rem;
+  }
+
+  .hand-label--row { min-width: 70px; }
+  .hand-label--col { min-width: 48px; }
+  .hand-label--diag { min-width: 60px; }
+}
