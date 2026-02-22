@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <rect width="512" height="512" fill="#1a1a2e"/>
+  <text x="50%" y="35%" text-anchor="middle" dominant-baseline="central" font-family="Arial, sans-serif" font-size="96" font-weight="bold" fill="#ffd700">POKER</text>
+  <text x="50%" y="58%" text-anchor="middle" dominant-baseline="central" font-family="Arial, sans-serif" font-size="80" font-weight="bold" fill="#42a5f5">DRAFT</text>
+  <text x="50%" y="78%" text-anchor="middle" dominant-baseline="central" font-size="72" fill="#ef5350">&#9829; &#9830; &#9827; &#9824;</text>
+</svg>
