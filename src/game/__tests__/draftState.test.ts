@@ -25,6 +25,9 @@ function makeDraftingState(overrides?: Partial<DraftState>): DraftState {
     round: 1,
     evaluations: null,
     finalScore: null,
+    bonusHighlighted: [],
+    bonusEvaluation: null,
+    bonusEnabled: true,
     ...overrides,
   };
 }
@@ -150,8 +153,16 @@ describe('draftReducer', () => {
       expect(state.currentDraft).toHaveLength(5);
     });
 
-    it('finishes game after round 7', () => {
+    it('finishes game after round 7 (goes to bonus prompt when enabled)', () => {
       const playing = makeDraftingState({ round: 7 });
+      const state = draftReducer(playing, { type: 'ACCEPT_ROUND' });
+      expect(state.phase).toBe(DraftPhase.BonusPrompt);
+      expect(state.evaluations).toHaveLength(12);
+      expect(state.finalScore).toBeTypeOf('number');
+    });
+
+    it('finishes game after round 7 (goes to finished when bonus disabled)', () => {
+      const playing = makeDraftingState({ round: 7, bonusEnabled: false });
       const state = draftReducer(playing, { type: 'ACCEPT_ROUND' });
       expect(state.phase).toBe(DraftPhase.Finished);
       expect(state.evaluations).toHaveLength(12);
@@ -176,23 +187,30 @@ describe('draftReducer', () => {
       expect(state.grid[2][0]).toBeNull();
     });
 
-    it('finishes game when on last round', () => {
+    it('finishes game when on last round (goes to bonus prompt when enabled)', () => {
       const playing = makeDraftingState({ round: 7 });
       const state = draftReducer(playing, { type: 'SKIP_ALL' });
-      expect(state.phase).toBe(DraftPhase.Finished);
+      expect(state.phase).toBe(DraftPhase.BonusPrompt);
     });
   });
 
   describe('FINISH_GAME', () => {
-    it('commits pending placements and finishes', () => {
+    it('commits pending placements and goes to bonus prompt', () => {
       const pending = new Map([[0, 2]]);
       const playing = makeDraftingState({ pendingPlacements: pending, round: 3 });
       const state = draftReducer(playing, { type: 'FINISH_GAME' });
-      expect(state.phase).toBe(DraftPhase.Finished);
+      expect(state.phase).toBe(DraftPhase.BonusPrompt);
       expect(state.evaluations).toHaveLength(12);
       expect(state.finalScore).toBeTypeOf('number');
       // Pending was committed via effective grid
       expect(state.grid[2][0]).toEqual(c(7, Suit.Spades));
+    });
+
+    it('goes to finished when bonus disabled', () => {
+      const pending = new Map([[0, 2]]);
+      const playing = makeDraftingState({ pendingPlacements: pending, round: 3, bonusEnabled: false });
+      const state = draftReducer(playing, { type: 'FINISH_GAME' });
+      expect(state.phase).toBe(DraftPhase.Finished);
     });
   });
 

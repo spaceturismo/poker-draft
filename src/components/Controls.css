@@ -48,6 +48,22 @@
   color: #fff;
 }
 
+.controls__btn--lock-in {
+  background: #ffd700;
+  color: #000;
+  font-size: 1.2rem;
+  padding: 14px 40px;
+  animation: lock-in-pulse 0.6s ease-in-out infinite alternate;
+}
+.controls__btn--lock-in:hover:not(:disabled) {
+  background: #ffea00;
+}
+
+@keyframes lock-in-pulse {
+  0% { transform: scale(1); box-shadow: 0 0 8px rgba(255, 215, 0, 0.4); }
+  100% { transform: scale(1.05); box-shadow: 0 0 20px rgba(255, 215, 0, 0.8); }
+}
+
 /* Responsive */
 @media (max-width: 420px) {
   .controls {

@@ -12,6 +12,7 @@ interface GridProps {
   onPlaceCard: (col: number, row: number) => void;
   onUnplaceCard: (col: number) => void;
   isPending: (row: number, col: number) => boolean;
+  isBonusHighlighted: (row: number, col: number) => boolean;
   phase: string;
   evaluations: HandEvaluation[] | null;
 }
@@ -19,6 +20,7 @@ interface GridProps {
 export function Grid({
   grid, isSlotAvailable,
   onPlaceCard, onUnplaceCard, isPending,
+  isBonusHighlighted,
   phase, evaluations,
 }: GridProps) {
   const isFinished = phase === DraftPhase.Finished;
@@ -59,6 +61,7 @@ export function Grid({
                   card={card}
                   isAvailable={isSlotAvailable(rowIdx, colIdx)}
                   isPending={pending}
+                  isBonusHighlighted={isBonusHighlighted(rowIdx, colIdx)}
                   onClick={() => onPlaceCard(colIdx, rowIdx)}
                   onUnplace={() => onUnplaceCard(colIdx)}
                 />

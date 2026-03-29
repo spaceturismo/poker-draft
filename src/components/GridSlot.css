@@ -11,6 +11,19 @@
   /* no extra styling, Card component handles it */
 }
 
+.grid-slot--bonus-highlight {
+  outline: 3px solid #ffd700;
+  outline-offset: 2px;
+  border-radius: 6px;
+  box-shadow: 0 0 12px rgba(255, 215, 0, 0.6), 0 0 24px rgba(255, 215, 0, 0.3);
+  animation: bonus-glow 0.3s ease-in-out;
+}
+
+@keyframes bonus-glow {
+  0% { box-shadow: 0 0 4px rgba(255, 215, 0, 0.2); }
+  100% { box-shadow: 0 0 12px rgba(255, 215, 0, 0.6), 0 0 24px rgba(255, 215, 0, 0.3); }
+}
+
 .grid-slot--pending {
   position: relative;
   cursor: pointer;

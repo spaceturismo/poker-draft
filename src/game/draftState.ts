@@ -1,9 +1,10 @@
 import { DraftPhase } from './draftTypes';
 import { createDeck, shuffleDeck, dealCards } from './deck';
 import { evaluateGrid, totalScore } from './gridEvaluator';
+import { evaluateHand } from './handEvaluator';
 import { GRID_SIZE, TOTAL_ROUNDS } from './constants';
 import type { Card } from './types';
-import type { DraftState, DraftAction } from './draftTypes';
+import type { DraftState, DraftAction, GridPos } from './draftTypes';
 
 function emptyGrid(): (Card | null)[][] {
   return Array.from({ length: GRID_SIZE }, () =>
@@ -21,6 +22,9 @@ export const initialState: DraftState = {
   round: 0,
   evaluations: null,
   finalScore: null,
+  bonusHighlighted: [],
+  bonusEvaluation: null,
+  bonusEnabled: true,
 };
 
 function commitPlacements(grid: (Card | null)[][], draft: Card[], pending: Map<number, number>): (Card | null)[][] {
@@ -38,14 +42,49 @@ export function getEffectiveGrid(state: DraftState): (Card | null)[][] {
 function finishGame(state: DraftState): DraftState {
   const effectiveGrid = getEffectiveGrid(state);
   const evaluations = evaluateGrid(effectiveGrid);
+  const score = totalScore(evaluations);
+
+  // If bonus round is enabled, go to bonus prompt instead of finished
+  if (state.bonusEnabled) {
+    return {
+      ...state,
+      grid: effectiveGrid,
+      pendingPlacements: new Map(),
+      phase: DraftPhase.BonusPrompt,
+      evaluations,
+      finalScore: score,
+    };
+  }
+
   return {
     ...state,
     grid: effectiveGrid,
     pendingPlacements: new Map(),
     phase: DraftPhase.Finished,
     evaluations,
-    finalScore: totalScore(evaluations),
+    finalScore: score,
   };
+}
+
+/** Collect all grid positions that have a card placed */
+export function getFilledPositions(grid: (Card | null)[][]): GridPos[] {
+  const positions: GridPos[] = [];
+  for (let r = 0; r < grid.length; r++) {
+    for (let c = 0; c < grid[r].length; c++) {
+      if (grid[r][c] !== null) positions.push([r, c]);
+    }
+  }
+  return positions;
+}
+
+/** Pick 5 random positions from the filled grid slots */
+export function pickRandomFive(filled: GridPos[]): GridPos[] {
+  const shuffled = [...filled];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled.slice(0, 5);
 }
 
 function dealNextRound(state: DraftState): DraftState {
@@ -91,6 +130,9 @@ export function draftReducer(state: DraftState, action: DraftAction): DraftState
         round: 0,
         evaluations: null,
         finalScore: null,
+        bonusHighlighted: [],
+        bonusEvaluation: null,
+        bonusEnabled: state.bonusEnabled,
       };
       return dealNextRound(base);
     }
@@ -158,6 +200,57 @@ export function draftReducer(state: DraftState, action: DraftAction): DraftState
     case 'FINISH_GAME': {
       if (state.phase !== DraftPhase.Drafting) return state;
       return finishGame(state);
+    }
+
+    case 'SET_BONUS_ENABLED': {
+      return { ...state, bonusEnabled: action.enabled };
+    }
+
+    case 'ACCEPT_BONUS': {
+      if (state.phase !== DraftPhase.BonusPrompt) return state;
+      const filled = getFilledPositions(state.grid);
+      if (filled.length < 5) return { ...state, phase: DraftPhase.Finished };
+      return {
+        ...state,
+        phase: DraftPhase.BonusRound,
+        bonusHighlighted: pickRandomFive(filled),
+      };
+    }
+
+    case 'DECLINE_BONUS': {
+      if (state.phase !== DraftPhase.BonusPrompt) return state;
+      return { ...state, phase: DraftPhase.Finished };
+    }
+
+    case 'CYCLE_BONUS': {
+      if (state.phase !== DraftPhase.BonusRound) return state;
+      // Evaluate the highlighted hand live so the score updates as cards cycle
+      const cycleCards = action.highlighted
+        .map(([r, c]) => state.grid[r][c])
+        .filter((card): card is Card => card !== null);
+      const cycleEval = cycleCards.length === 5 ? evaluateHand(cycleCards) : null;
+      return {
+        ...state,
+        bonusHighlighted: action.highlighted,
+        bonusEvaluation: cycleEval,
+      };
+    }
+
+    case 'LOCK_IN_BONUS': {
+      if (state.phase !== DraftPhase.BonusRound) return state;
+      const cards = state.bonusHighlighted
+        .map(([r, c]) => state.grid[r][c])
+        .filter((card): card is Card => card !== null);
+      if (cards.length !== 5) return { ...state, phase: DraftPhase.Finished };
+
+      const bonusEval = evaluateHand(cards);
+      const newScore = (state.finalScore ?? 0) + bonusEval.points;
+      return {
+        ...state,
+        phase: DraftPhase.Finished,
+        bonusEvaluation: bonusEval,
+        finalScore: newScore,
+      };
     }
 
     default:

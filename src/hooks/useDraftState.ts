@@ -1,15 +1,41 @@
-import { useReducer, useCallback, useMemo } from 'react';
-import { draftReducer, initialState, getEffectiveGrid } from '../game/draftState';
+import { useReducer, useCallback, useMemo, useEffect, useRef } from 'react';
+import { draftReducer, initialState, getEffectiveGrid, getFilledPositions, pickRandomFive } from '../game/draftState';
 import { DraftPhase } from '../game/draftTypes';
+import { evaluateGrid, totalScore } from '../game/gridEvaluator';
 
+const BONUS_CYCLE_MS = 400;
 
 export function useDraftState() {
   const [state, dispatch] = useReducer(draftReducer, initialState);
+  const cycleRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const effectiveGrid = useMemo(() => {
     if (state.phase === DraftPhase.Idle) return state.grid;
     return getEffectiveGrid(state);
   }, [state]);
+
+  const liveScore = useMemo(() => {
+    if (state.phase === DraftPhase.Idle) return 0;
+    return totalScore(evaluateGrid(effectiveGrid));
+  }, [effectiveGrid, state.phase]);
+
+  // Bonus round: cycle highlighted cards on an interval
+  useEffect(() => {
+    if (state.phase === DraftPhase.BonusRound) {
+      const filled = getFilledPositions(state.grid);
+      cycleRef.current = setInterval(() => {
+        dispatch({ type: 'CYCLE_BONUS', highlighted: pickRandomFive(filled) });
+      }, BONUS_CYCLE_MS);
+      return () => {
+        if (cycleRef.current) clearInterval(cycleRef.current);
+      };
+    } else {
+      if (cycleRef.current) {
+        clearInterval(cycleRef.current);
+        cycleRef.current = null;
+      }
+    }
+  }, [state.phase, state.grid]);
 
   const startGame = useCallback(() => dispatch({ type: 'START_GAME' }), []);
   const placeCard = useCallback(
@@ -32,6 +58,15 @@ export function useDraftState() {
   const skipAll = useCallback(() => dispatch({ type: 'SKIP_ALL' }), []);
   const finishGame = useCallback(() => dispatch({ type: 'FINISH_GAME' }), []);
   const restart = useCallback(() => dispatch({ type: 'RESTART' }), []);
+
+  // Bonus round actions
+  const acceptBonus = useCallback(() => dispatch({ type: 'ACCEPT_BONUS' }), []);
+  const declineBonus = useCallback(() => dispatch({ type: 'DECLINE_BONUS' }), []);
+  const lockInBonus = useCallback(() => dispatch({ type: 'LOCK_IN_BONUS' }), []);
+  const setBonusEnabled = useCallback(
+    (enabled: boolean) => dispatch({ type: 'SET_BONUS_ENABLED', enabled }),
+    []
+  );
 
   /** For each grid slot, is it a valid drop target? (empty + draft card available for that col) */
   const isSlotAvailable = useCallback(
@@ -71,13 +106,23 @@ export function useDraftState() {
     [state.currentDraft, state.pendingPlacements, state.draftSkipped]
   );
 
+  /** Check if a grid position is highlighted during bonus round */
+  const isBonusHighlighted = useCallback(
+    (row: number, col: number): boolean => {
+      return state.bonusHighlighted.some(([r, c]) => r === row && c === col);
+    },
+    [state.bonusHighlighted]
+  );
+
   return {
     ...state,
     effectiveGrid,
+    liveScore,
     isSlotAvailable,
     isPending,
     isDraftPlaced,
     getDraftCardForCol,
+    isBonusHighlighted,
     startGame,
     placeCard,
     unplaceCard,
@@ -87,5 +132,9 @@ export function useDraftState() {
     skipAll,
     finishGame,
     restart,
+    acceptBonus,
+    declineBonus,
+    lockInBonus,
+    setBonusEnabled,
   };
 }

@@ -6,11 +6,12 @@ interface GridSlotProps {
   card: CardType | null;
   isAvailable: boolean;
   isPending: boolean;
+  isBonusHighlighted?: boolean;
   onClick: () => void;
   onUnplace: () => void;
 }
 
-export function GridSlot({ card, isAvailable, isPending, onClick, onUnplace }: GridSlotProps) {
+export function GridSlot({ card, isAvailable, isPending, isBonusHighlighted, onClick, onUnplace }: GridSlotProps) {
   if (card && isPending) {
     return (
       <div className="grid-slot grid-slot--pending" onClick={onUnplace} title="Click to undo placement">
@@ -21,8 +22,10 @@ export function GridSlot({ card, isAvailable, isPending, onClick, onUnplace }: G
   }
 
   if (card) {
+    const classes = ['grid-slot', 'grid-slot--filled'];
+    if (isBonusHighlighted) classes.push('grid-slot--bonus-highlight');
     return (
-      <div className="grid-slot grid-slot--filled">
+      <div className={classes.join(' ')}>
         <Card rank={card.rank} suit={card.suit} size="small" disabled />
       </div>
     );

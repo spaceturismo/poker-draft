@@ -23,6 +23,28 @@
   margin-top: 4px;
 }
 
+.results__bonus {
+  margin-bottom: 12px;
+  font-size: 1.1rem;
+}
+
+.results__bonus-label {
+  color: #aaa;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  letter-spacing: 0.05em;
+}
+
+.results__bonus-hand {
+  color: #ffd700;
+  font-weight: bold;
+}
+
+.results__bonus-points {
+  color: #66bb6a;
+  font-weight: bold;
+}
+
 /* Responsive */
 @media (max-width: 420px) {
   .results__score {

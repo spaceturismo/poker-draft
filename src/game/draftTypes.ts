@@ -3,9 +3,14 @@ import type { Card, HandEvaluation } from './types';
 export const DraftPhase = {
   Idle: 'idle',
   Drafting: 'drafting',
+  BonusPrompt: 'bonus_prompt',
+  BonusRound: 'bonus_round',
   Finished: 'finished',
 } as const;
 export type DraftPhase = (typeof DraftPhase)[keyof typeof DraftPhase];
+
+/** Grid position of a card: [row, col] */
+export type GridPos = [number, number];
 
 export interface DraftState {
   phase: DraftPhase;
@@ -21,6 +26,12 @@ export interface DraftState {
   round: number;
   evaluations: HandEvaluation[] | null;
   finalScore: number | null;
+  /** Bonus round: the 5 currently highlighted grid positions */
+  bonusHighlighted: GridPos[];
+  /** Bonus round: the evaluation of the locked-in bonus hand */
+  bonusEvaluation: HandEvaluation | null;
+  /** Whether the bonus round feature is enabled */
+  bonusEnabled: boolean;
 }
 
 export type DraftAction =
@@ -32,4 +43,9 @@ export type DraftAction =
   | { type: 'ACCEPT_ROUND' }
   | { type: 'SKIP_ALL' }
   | { type: 'FINISH_GAME' }
-  | { type: 'RESTART' };
+  | { type: 'RESTART' }
+  | { type: 'ACCEPT_BONUS' }
+  | { type: 'DECLINE_BONUS' }
+  | { type: 'CYCLE_BONUS'; highlighted: GridPos[] }
+  | { type: 'LOCK_IN_BONUS' }
+  | { type: 'SET_BONUS_ENABLED'; enabled: boolean };
